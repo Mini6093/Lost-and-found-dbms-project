@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>RVU - Lost & Found Admin Panel</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Login -->
+  <div id="loginDiv">
+    <img src="header_logo.svg" alt="RVU Logo" id="logo" style="position: absolute; top: 10px; left: 20px; height: 70px; width: auto; display: inline;">
+
+  <div class="centered-form">
+    <div style="width: 100%; max-width: 500px;">
+      <h2 style="text-align: center;">Admin Login</h2>
+      <form id="loginForm">
+        <label>Username: <input type="text" name="username" required></label>
+        <label>Password: <input type="password" name="password" required></label>
+        <button type="submit">Login</button>
+      </form>
+    </div>
+  </div>
+  <div id="loginMsg" class="error"></div>
+</div>
+
+
+  <!-- Main App -->
+  <div id="app" class="hidden">
+
+    <h1>
+  <img src="header_logo.svg" alt="RVU Logo" id="logo">
+  RVU - Lost & Found Admin Panel
+</h1>
+
+    <nav>
+      <button onclick="showSection('viewLost')">View Open Lost</button>
+      <button onclick="showSection('viewFound')">View Open Found</button>
+      <button onclick="showSection('viewMatches')">View Matches</button>
+      <button onclick="showSection('viewHistory')">View Status History</button>
+      <button onclick="showSection('viewAllLost')">View All Lost</button>
+      <button onclick="showSection('viewAllFound')">View All Found</button>
+      <button onclick="showSection('newLost')">Report Lost</button>
+      <button onclick="showSection('newFound')">Report Found</button>
+      <button onclick="showSection('manageLocations')">Manage Locations</button>
+      <button onclick="showSection('manageCategories')">Manage Categories</button>
+      <button onclick="showSection('changePassword')">Change Password</button>
+    </nav>
+
+    <!-- Change Password -->
+    <section id="changePassword" class="hidden">
+      <h2>Change Password</h2>
+      <form id="changePassForm">
+        <label>Old Password: <input type="password" name="old_password" required></label>
+        <label>New Password: <input type="password" name="new_password" required></label>
+        <label>Confirm Password: <input type="password" name="confirm_password" required></label>
+        <button type="submit">Change Password</button>
+      </form>
+      <div id="changePassMsg" class="error"></div>
+      <div id="changePassSuccess" class="success"></div>
+    </section>
+
+    <!-- Manage Locations -->
+    <section id="manageLocations" class="hidden">
+      <h2>Manage Locations</h2>
+      <div id="locationError" class="error"></div>
+      <div id="locationSuccess" class="success"></div>
+      <table id="locationTable">
+        <thead>
+          <tr><th>ID</th><th>Name</th><th>Details</th><th>Actions</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      <h3>Add Location</h3>
+      <form id="locationForm">
+        <label>Name: <input name="location_name" required></label>
+        <label>Details: <textarea name="location_details"></textarea></label>
+        <button type="submit">Save Location</button>
+      </form>
+    </section>
+
+    <!-- Manage Categories -->
+    <section id="manageCategories" class="hidden">
+      <h2>Manage Categories</h2>
+      <div id="categoryError" class="error"></div>
+      <div id="categorySuccess" class="success"></div>
+      <table id="categoryTable">
+        <thead>
+          <tr><th>ID</th><th>Name</th><th>Description</th><th>Actions</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      <h3>Add Category</h3>
+      <form id="categoryForm">
+        <label>Name: <input name="category_name" required></label>
+        <label>Description: <textarea name="category_description"></textarea></label>
+        <button type="submit">Save Category</button>
+      </form>
+    </section>
+
+    <!-- View Lost Items (Open) -->
+    <section id="viewLost" class="hidden">
+      <h2>Open Lost Items</h2>
+      <div id="lostError" class="error"></div>
+      <div id="lostSuccess" class="success"></div>
+      <table id="lostTable">
+        <thead>
+          <tr>
+            <th>ID</th><th>Report Date</th><th>Reporter</th><th>Contact</th>
+            <th>Item</th><th>Description</th><th>Lost Date</th><th>Location</th>
+            <th>Category</th><th>Status</th><th>Notes</th><th>Resolved Date</th><th>Actions</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
+
+    <!-- Edit Lost Item -->
+    <section id="editLost" class="hidden">
+      <h2>Edit Lost Item</h2>
+      <form id="editLostForm">
+        <input type="hidden" name="lost_item_id">
+        <label>Reporter Name: <input name="reporter_name" required></label>
+        <label>Reporter Contact: <input name="reporter_contact" required></label>
+        <label>Item Name: <input name="item_name" required></label>
+        <label>Description: <textarea name="item_description"></textarea></label>
+        <label>Lost Date: <input type="datetime-local" name="lost_date" required></label>
+        <label>Location:
+          <select id="editLostLocation" name="lost_location_id" required></select>
+        </label>
+        <label>Category:
+          <select id="editLostCategory" name="category_id"></select>
+        </label>
+        <label>Notes: <textarea name="notes"></textarea></label>
+        <button type="submit">Save</button>
+        <button type="button" onclick="cancelEditLost()">Cancel</button>
+      </form>
+      <div id="editLostMsg" class="error"></div>
+    </section>
+
+    <!-- View Found Items (Open) -->
+    <section id="viewFound" class="hidden">
+      <h2>Open Found Items</h2>
+      <div id="foundError" class="error"></div>
+      <div id="foundSuccess" class="success"></div>
+      <table id="foundTable">
+        <thead>
+          <tr>
+            <th>ID</th><th>Report Date</th><th>Reporter</th><th>Contact</th>
+            <th>Item</th><th>Description</th><th>Found Date</th><th>Found Loc</th>
+            <th>Assigned Loc</th><th>Category</th><th>Status</th><th>Notes</th>
+            <th>Resolved Date</th><th>Actions</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
+
+    <!-- Edit Found Item -->
+    <section id="editFound" class="hidden">
+      <h2>Edit Found Item</h2>
+      <form id="editFoundForm">
+        <input type="hidden" name="found_item_id">
+        <label>Reporter Name: <input name="reporter_name" required></label>
+        <label>Reporter Contact: <input name="reporter_contact" required></label>
+        <label>Item Name: <input name="item_name" required></label>
+        <label>Description: <textarea name="item_description"></textarea></label>
+        <label>Found Date: <input type="datetime-local" name="found_date" required></label>
+        <label>Found Location:
+          <select id="editFoundLocation" name="found_location_id" required></select>
+        </label>
+        <label>Assigned Location:
+          <select id="editFoundAssigned" name="assigned_location_id"></select>
+        </label>
+        <label>Category:
+          <select id="editFoundCategory" name="category_id"></select>
+        </label>
+        <label>Notes: <textarea name="notes"></textarea></label>
+        <button type="submit">Save</button>
+        <button type="button" onclick="cancelEditFound()">Cancel</button>
+      </form>
+      <div id="editFoundMsg" class="error"></div>
+    </section>
+
+    <!-- View Matched Items -->
+    <section id="viewMatches" class="hidden">
+      <h2>Matched Items</h2>
+      <div id="matchSuccess" class="success"></div>
+      <table id="matchTable">
+        <thead>
+          <tr>
+            <th>Match ID</th>
+            <th>Lost Item ID</th>
+            <th>Found Item ID</th>
+            <th>Lost Item</th>
+            <th>Found Item</th>
+            <th>Match Date</th>
+            <th>Resolved Status</th>
+            <th>Resolved Date</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
+
+    <!-- View Status History -->
+    <section id="viewHistory" class="hidden">
+      <h2>Status History</h2>
+      <div id="historyError" class="error"></div>
+      <table id="historyTable">
+        <thead>
+          <tr>
+            <th>History ID</th><th>Item ID</th><th>Type</th><th>Status</th>
+            <th>Changed By</th><th>When</th><th>Notes</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
+
+    <!-- All Lost Items -->
+    <section id="viewAllLost" class="hidden">
+      <h2>All Lost Items</h2>
+      <table id="allLostTable">
+        <thead>
+          <tr>
+            <th>ID</th><th>Report Date</th><th>Reporter</th><th>Contact</th>
+            <th>Item</th><th>Description</th><th>Lost Date</th>
+            <th>Location</th><th>Category</th><th>Status</th>
+            <th>Notes</th><th>Resolved Date</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
+
+    <!-- All Found Items -->
+    <section id="viewAllFound" class="hidden">
+      <h2>All Found Items</h2>
+      <table id="allFoundTable">
+        <thead>
+          <tr>
+            <th>ID</th><th>Report Date</th><th>Reporter</th><th>Contact</th>
+            <th>Item</th><th>Description</th><th>Found Date</th>
+            <th>Found Loc</th><th>Assigned Loc</th><th>Category</th>
+            <th>Status</th><th>Notes</th><th>Resolved Date</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
+
+    <!-- Report Lost Item -->
+    <section id="newLost" class="hidden">
+  <div class="centered-form">
+    <div style="width: 100%; max-width: 500px;">
+      <h2 style="text-align: center;">Report Lost Item</h2>
+      <form id="lostForm">
+        <label>Reporter Name: <input name="reporter_name" required></label>
+        <label>Reporter Contact: <input name="reporter_contact" required></label>
+        <label>Item Name: <input name="item_name" required></label>
+        <label>Description: <textarea name="item_description"></textarea></label>
+        <label>Lost Date: <input type="datetime-local" name="lost_date" required></label>
+        <label>Location:
+          <select id="lostLocationSelect" name="lost_location_id" required></select>
+        </label>
+        <label>Category:
+          <select id="lostCategorySelect" name="category_id"></select>
+        </label>
+        <label>Notes: <textarea name="notes"></textarea></label>
+        <button type="submit">Submit Lost</button>
+      </form>
+      <div id="lostMsg"></div>
+    </div>
+  </div>
+</section>
+
+
+    <!-- Report Found Item -->
+    <section id="newFound" class="hidden">
+  <div class="centered-form">
+    <div style="width: 100%; max-width: 500px;">
+      <h2 style="text-align: center;">Report Found Item</h2>
+      <form id="foundForm">
+        <label>Reporter Name: <input name="reporter_name" required></label>
+        <label>Reporter Contact: <input name="reporter_contact" required></label>
+        <label>Item Name: <input name="item_name" required></label>
+        <label>Description: <textarea name="item_description"></textarea></label>
+        <label>Found Date: <input type="datetime-local" name="found_date" required></label>
+        <label>Found Location:
+          <select id="foundLocationSelect" name="found_location_id" required></select>
+        </label>
+        <label>Assigned Location:
+          <select id="assignedLocationSelect" name="assigned_location_id"></select>
+        </label>
+        <label>Category:
+          <select id="foundCategorySelect" name="category_id"></select>
+        </label>
+        <label>Notes: <textarea name="notes"></textarea></label>
+        <button type="submit">Submit Found</button>
+      </form>
+      <div id="foundMsg"></div>
+    </div>
+  </div>
+</section>
+
+
+  </div>
+  
+
+  <script>
+    function clearMessages() {
+      document.querySelectorAll('.error, .success').forEach(el => el.innerText = '');
+    }
+    function showSection(id) {
+      document.querySelectorAll('section').forEach(s => s.classList.add('hidden'));
+      document.getElementById(id).classList.remove('hidden');
+      clearMessages();
+      if (id === 'viewLost') loadLost();
+      if (id === 'viewFound') loadFound();
+      if (id === 'newLost' || id === 'newFound') { loadLocations(); loadCategories(); }
+      if (id === 'manageLocations') loadLocationsTable();
+      if (id === 'manageCategories') loadCategoriesTable();
+      if (id === 'viewMatches') loadMatches();
+      if (id === 'viewHistory') loadHistory();
+      if (id === 'viewAllLost') loadAllLost();
+      if (id === 'viewAllFound') loadAllFound();
+    }
+
+    // LOGIN
+    document.getElementById('loginForm').onsubmit = e => {
+      e.preventDefault();
+      fetch('/api/login', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify(Object.fromEntries(new FormData(e.target)))
+      })
+      .then(r=>r.json())
+      .then(d => {
+        if (d.success) {
+          document.getElementById('loginDiv').classList.add('hidden');
+          document.getElementById('app').classList.remove('hidden');
+          showSection('viewLost');
+        } else {
+          document.getElementById('loginMsg').innerText = d.error;
+        }
+      });
+    };
+
+    // CHANGE PASSWORD
+    document.getElementById('changePassForm').onsubmit = e => {
+      e.preventDefault(); clearMessages();
+      const oldP = e.target.old_password.value;
+      const newP = e.target.new_password.value;
+      const conf = e.target.confirm_password.value;
+      if (newP !== conf) {
+        document.getElementById('changePassMsg').innerText = 'Passwords do not match.';
+        return;
+      }
+      fetch('/api/change-password', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({ old_password: oldP, new_password: newP })
+      })
+      .then(r=>r.json())
+      .then(data => {
+        if (data.success) {
+          document.getElementById('changePassSuccess').innerText = 'Password changed.';
+          e.target.reset();
+        } else {
+          document.getElementById('changePassMsg').innerText = data.error;
+        }
+      });
+    };
+
+    // LOAD DROPDOWNS
+    function loadLocations() {
+      fetch('/api/locations').then(r=>r.json()).then(rows=>{
+        ['lostLocationSelect','foundLocationSelect','assignedLocationSelect',
+         'editLostLocation','editFoundLocation','editFoundAssigned']
+        .forEach(id=>{
+          const sel=document.getElementById(id);
+          if(!sel)return;
+          sel.innerHTML='';
+          rows.forEach(loc=>sel.add(new Option(loc.location_name,loc.location_id)));
+        });
+      });
+    }
+    function loadCategories() {
+      fetch('/api/categories').then(r=>r.json()).then(rows=>{
+        ['lostCategorySelect','foundCategorySelect','editLostCategory','editFoundCategory']
+        .forEach(id=>{
+          const sel=document.getElementById(id);
+          if(!sel)return;
+          sel.innerHTML='';
+          rows.forEach(cat=>sel.add(new Option(cat.category_name,cat.category_id)));
+        });
+      });
+    }
+
+    // MANAGE LOCATIONS
+    function loadLocationsTable() {
+      fetch('/api/locations').then(r=>r.json()).then(rows=>{
+        const tb = document.querySelector('#locationTable tbody');
+        tb.innerHTML = '';
+        rows.forEach(r=>{
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${r.location_id}</td>
+            <td>${r.location_name}</td>
+            <td>${r.location_details||''}</td>
+            <td><button onclick="editLocation(${r.location_id})">Edit</button></td>`;
+          tb.appendChild(tr);
+        });
+      });
+    }
+    document.getElementById('locationForm').onsubmit = e => {
+      e.preventDefault(); clearMessages();    
+      const data = Object.fromEntries(new FormData(e.target));
+      fetch('/api/locations',{ method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(data)})
+        .then(r=>r.json()).then(res=>{
+          if(res.success){ document.getElementById('locationSuccess').innerText='Location added.'; e.target.reset(); loadLocationsTable(); }
+          else document.getElementById('locationError').innerText=res.error;
+        });
+    };
+    function editLocation(id) {
+      fetch(`/api/locations/${id}`).then(r=>r.json()).then(loc=>{
+        const name = prompt('Name',loc.location_name); if(name===null) return;
+        const details = prompt('Details',loc.location_details); if(details===null) return;
+        fetch(`/api/locations/${id}`,{
+          method:'PUT', headers:{'Content-Type':'application/json'},
+          body:JSON.stringify({ location_name:name, location_details:details })
+        }).then(r=>r.json()).then(res=>{
+          if(res.success){ document.getElementById('locationSuccess').innerText='Location updated.'; loadLocationsTable(); }
+          else document.getElementById('locationError').innerText=res.error;
+        });
+      });
+    }
+
+    // MANAGE CATEGORIES
+    function loadCategoriesTable() {
+      fetch('/api/categories').then(r=>r.json()).then(rows=>{
+        const tb = document.querySelector('#categoryTable tbody');
+        tb.innerHTML = '';
+        rows.forEach(r=>{
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${r.category_id}</td>
+            <td>${r.category_name}</td>
+            <td>${r.category_description||''}</td>
+            <td><button onclick="editCategory(${r.category_id})">Edit</button></td>`;
+          tb.appendChild(tr);
+        });
+      });
+    }
+    document.getElementById('categoryForm').onsubmit = e => {
+      e.preventDefault(); clearMessages();
+      const data = Object.fromEntries(new FormData(e.target));
+      fetch('/api/categories',{ method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(data)})
+        .then(r=>r.json()).then(res=>{
+          if(res.success){ document.getElementById('categorySuccess').innerText='Category added.'; e.target.reset(); loadCategoriesTable(); }
+          else document.getElementById('categoryError').innerText=res.error;
+        });
+    };
+    function editCategory(id) {
+      fetch(`/api/categories/${id}`).then(r=>r.json()).then(cat=>{
+        const name = prompt('Name',cat.category_name); if(name===null) return;
+        const desc = prompt('Description',cat.category_description); if(desc===null) return;
+        fetch(`/api/categories/${id}`,{
+          method:'PUT', headers:{'Content-Type':'application/json'},
+          body:JSON.stringify({ category_name:name, category_description:desc })
+        }).then(r=>r.json()).then(res=>{
+          if(res.success){ document.getElementById('categorySuccess').innerText='Category updated.'; loadCategoriesTable(); }
+          else document.getElementById('categoryError').innerText=res.error;
+        });
+      });
+    }
+
+    // VIEW LOST
+    function loadLost() {
+      fetch('/api/lost/open').then(r=>r.json()).then(rows=>{
+        const tb = document.querySelector('#lostTable tbody');
+        tb.innerHTML = '';
+        rows.forEach(r=>{
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${r.lost_item_id}</td>
+            <td>${new Date(r.report_date).toLocaleString()}</td>
+            <td>${r.reporter_name}</td>
+            <td>${r.reporter_contact}</td>
+            <td>${r.item_name}</td>
+            <td>${r.item_description||''}</td>
+            <td>${new Date(r.lost_date).toLocaleString()}</td>
+            <td>${r.lost_location}</td>
+            <td>${r.category_name||''}</td>
+            <td>${r.status}</td>
+            <td>${r.notes||''}</td>
+            <td>${r.resolved_date?new Date(r.resolved_date).toLocaleString():''}</td>
+            <td>
+              <button onclick="startEditLost(${r.lost_item_id})">Edit</button>
+              <button onclick="matchLost(${r.lost_item_id})">Match</button>
+              <button onclick="deleteLost(${r.lost_item_id})">Delete</button>
+            </td>`;
+          tb.appendChild(tr);
+        });
+      });
+    }
+
+    function startEditLost(id) {
+      fetch(`/api/lost/${id}`).then(r=>r.json()).then(data=>{
+        const form = document.getElementById('editLostForm');
+        form.lost_item_id.value = data.lost_item_id;
+        form.reporter_name.value = data.reporter_name;
+        form.reporter_contact.value = data.reporter_contact;
+        form.item_name.value = data.item_name;
+        form.item_description.value = data.item_description||'';
+        form.lost_date.value = data.lost_date.slice(0,16);
+        form.notes.value = data.notes||'';
+        fetch('/api/locations').then(r=>r.json()).then(locRows=>{
+          const sel = document.getElementById('editLostLocation');
+          sel.innerHTML = '';
+          locRows.forEach(loc=> sel.add(new Option(loc.location_name,loc.location_id)));
+          sel.value = data.lost_location_id;
+        });
+        fetch('/api/categories').then(r=>r.json()).then(catRows=>{
+          const sel = document.getElementById('editLostCategory');
+          sel.innerHTML = '';
+          catRows.forEach(cat=> sel.add(new Option(cat.category_name,cat.category_id)));
+          sel.value = data.category_id||'';
+        });
+        showSection('editLost');
+      });
+    }
+
+    document.getElementById('editLostForm').onsubmit = e => {
+      e.preventDefault(); clearMessages();
+      const id = e.target.lost_item_id.value;
+      const payload = Object.fromEntries(new FormData(e.target));
+      fetch(`/api/lost/${id}`,{ method:'PUT', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload) })
+        .then(r=>r.json()).then(res=>{
+          if(res.success){
+            showSection('viewLost');
+            document.getElementById('lostSuccess').innerText='Updated successfully';
+          } else {
+            document.getElementById('editLostMsg').innerText=res.error||'Update failed';
+          }
+        });
+    };
+
+    function cancelEditLost() { showSection('viewLost'); }
+
+    function deleteLost(id) {
+      if(!confirm(`Delete Lost #${id}?`)) return;
+      fetch(`/api/lost/${id}`,{ method:'DELETE' })
+        .then(r=>r.json()).then(res=>{
+          if(res.success){
+            document.getElementById('lostSuccess').innerText='Deleted.';
+            loadLost();
+          } else {
+            document.getElementById('lostError').innerText=res.error||'Delete failed';
+          }
+        });
+    }
+
+    function matchLost(id) {
+      fetch('/api/found/open').then(r=>r.json()).then(list=>{
+        const opts = list.map(f=>`${f.found_item_id}: ${f.item_name}`).join('\n');
+        const inp = prompt(`Match Lost #${id} with?\n\n${opts}`);
+        const fid = parseInt(inp,10); if(!fid) return;
+        if(!confirm(`Confirm Lost #${id} ↔ Found #${fid}?`)) return;
+        fetch('/api/match',{ method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({lost_item_id:id,found_item_id:fid}) })
+          .then(r=>r.json()).then(res=>{
+            if(res.success){
+              showSection('viewMatches');
+              document.getElementById('matchSuccess').innerText='Matched successfully';
+            } else {
+              document.getElementById('lostError').innerText=res.error||'Match failed';
+            }
+          });
+      });
+    }
+
+    function loadFound() {
+      fetch('/api/found/open').then(r=>r.json()).then(rows=>{
+        const tb = document.querySelector('#foundTable tbody');
+        tb.innerHTML = '';
+        rows.forEach(r=>{
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${r.found_item_id}</td>
+            <td>${new Date(r.report_date).toLocaleString()}</td>
+            <td>${r.reporter_name}</td>
+            <td>${r.reporter_contact}</td>
+            <td>${r.item_name}</td>
+            <td>${r.item_description||''}</td>
+            <td>${new Date(r.found_date).toLocaleString()}</td>
+            <td>${r.found_location}</td>
+            <td>${r.assigned_location||''}</td>
+            <td>${r.category_name||''}</td>
+            <td>${r.status}</td>
+            <td>${r.notes||''}</td>
+            <td>${r.resolved_date?new Date(r.resolved_date).toLocaleString():''}</td>
+            <td>
+              <button onclick="startEditFound(${r.found_item_id})">Edit</button>
+              <button onclick="matchFound(${r.found_item_id})">Match</button>
+              <button onclick="deleteFound(${r.found_item_id})">Delete</button>
+            </td>`;
+          tb.appendChild(tr);
+        });
+      });
+    }
+
+    function startEditFound(id) {
+      fetch(`/api/found/${id}`).then(r=>r.json()).then(data=>{
+        const form = document.getElementById('editFoundForm');
+        form.found_item_id.value = data.found_item_id;
+        form.reporter_name.value = data.reporter_name;
+        form.reporter_contact.value = data.reporter_contact;
+        form.item_name.value = data.item_name;
+        form.item_description.value = data.item_description||'';
+        form.found_date.value = data.found_date.slice(0,16);
+        form.notes.value = data.notes||'';
+        fetch('/api/locations').then(r=>r.json()).then(locRows=>{
+          const sel = document.getElementById('editFoundLocation');
+          sel.innerHTML = '';
+          locRows.forEach(loc=> sel.add(new Option(loc.location_name,loc.location_id)));
+          sel.value = data.found_location_id;
+        });
+        fetch('/api/locations').then(r=>r.json()).then(locRows=>{
+          const sel = document.getElementById('editFoundAssigned');
+          sel.innerHTML = '';
+          locRows.forEach(loc=> sel.add(new Option(loc.location_name,loc.location_id)));
+          sel.value = data.assigned_location_id||'';
+        });
+        fetch('/api/categories').then(r=>r.json()).then(catRows=>{
+          const sel = document.getElementById('editFoundCategory');
+          sel.innerHTML = '';
+          catRows.forEach(cat=> sel.add(new Option(cat.category_name,cat.category_id)));
+          sel.value = data.category_id||'';
+        });
+        showSection('editFound');
+      });
+    }
+
+    document.getElementById('editFoundForm').onsubmit = e => {
+      e.preventDefault(); clearMessages();
+      const id = e.target.found_item_id.value;
+      const payload = Object.fromEntries(new FormData(e.target));
+      fetch(`/api/found/${id}`,{ method:'PUT', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload) })
+        .then(r=>r.json()).then(res=>{
+          if(res.success){
+            showSection('viewFound');
+            document.getElementById('foundSuccess').innerText='Updated successfully';
+          } else {
+            document.getElementById('editFoundMsg').innerText=res.error||'Update failed';
+          }
+        });
+    };
+
+    function cancelEditFound() { showSection('viewFound'); }
+
+    function deleteFound(id) {
+      if(!confirm(`Delete Found #${id}?`)) return;
+      fetch(`/api/found/${id}`,{ method:'DELETE' })
+        .then(r=>r.json()).then(res=>{
+          if(res.success){
+            document.getElementById('foundSuccess').innerText='Deleted.';
+            loadFound();
+          } else {
+            document.getElementById('foundError').innerText=res.error||'Delete failed';
+          }
+        });
+    }
+
+    function matchFound(id) {
+      fetch('/api/lost/open').then(r=>r.json()).then(list=>{
+        const opts = list.map(l=>`${l.lost_item_id}: ${l.item_name}`).join('\n');
+        const inp = prompt(`Match Found #${id} with?\n\n${opts}`);
+        const lid = parseInt(inp,10); if(!lid) return;
+        if(!confirm(`Confirm Found #${id} ↔ Lost #${lid}?`)) return;
+        fetch('/api/match',{ method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({lost_item_id:lid,found_item_id:id}) })
+          .then(r=>r.json()).then(res=>{
+            if(res.success){
+              showSection('viewMatches');
+              document.getElementById('matchSuccess').innerText='Matched successfully';
+            } else {
+              document.getElementById('foundError').innerText=res.error||'Match failed';
+            }
+          });
+      });
+    }
+
+    function loadMatches() {
+      fetch('/api/matches').then(r=>r.json()).then(rows=>{
+        const tb = document.querySelector('#matchTable tbody');
+        tb.innerHTML = '';
+        rows.forEach(m=>{
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${m.match_id}</td>
+            <td>${m.lost_item_id}</td>
+            <td>${m.found_item_id}</td>
+            <td>${m.lost_item}</td>
+            <td>${m.found_item}</td>
+            <td>${new Date(m.match_date).toLocaleString()}</td>
+            <td>${m.resolved_status||''}</td>
+            <td>${m.resolved_date?new Date(m.resolved_date).toLocaleString():''}</td>
+            <td>
+              <button onclick="resolveMatch(${m.match_id},'returned')">Return</button>
+              <button onclick="resolveMatch(${m.match_id},'unclaimed')">Unclaimed</button>
+            </td>`;
+          tb.appendChild(tr);
+        });
+      });
+    }
+
+    function resolveMatch(id, status) {
+      fetch(`/api/match/${id}/status`,{ method:'PUT', headers:{'Content-Type':'application/json'}, body:JSON.stringify({resolved_status:status}) })
+        .then(r=>r.json()).then(()=> showSection('viewMatches'));
+    }
+
+    function loadHistory() {
+      fetch('/api/history').then(r=>r.json()).then(rows=>{
+        const tb = document.querySelector('#historyTable tbody');
+        tb.innerHTML = '';
+        rows.forEach(h=>{
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${h.history_id}</td>
+            <td>${h.item_id}</td>
+            <td>${h.item_type}</td>
+            <td>${h.status}</td>
+            <td>${h.username||h.changed_by_admin_id}</td>
+            <td>${new Date(h.change_date).toLocaleString()}</td>
+            <td>${h.notes||''}</td>`;
+          tb.appendChild(tr);
+        });
+      });
+    }
+
+    function loadAllLost() {
+      fetch('/api/lost/all').then(r=>r.json()).then(rows=>{
+        const tb = document.querySelector('#allLostTable tbody');
+        tb.innerHTML = '';
+        rows.forEach(r=>{
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${r.lost_item_id}</td>
+            <td>${new Date(r.report_date).toLocaleString()}</td>
+            <td>${r.reporter_name}</td>
+            <td>${r.reporter_contact}</td>
+            <td>${r.item_name}</td>
+            <td>${r.item_description||''}</td>
+            <td>${new Date(r.lost_date).toLocaleString()}</td>
+            <td>${r.lost_location}</td>
+            <td>${r.category_name||''}</td>
+            <td>${r.status}</td>
+            <td>${r.notes||''}</td>
+            <td>${r.resolved_date?new Date(r.resolved_date).toLocaleString():''}</td>`;
+          tb.appendChild(tr);
+        });
+      });
+    }
+
+    function loadAllFound() {
+      fetch('/api/found/all').then(r=>r.json()).then(rows=>{
+        const tb = document.querySelector('#allFoundTable tbody');
+        tb.innerHTML = '';
+        rows.forEach(r=>{
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${r.found_item_id}</td>
+            <td>${new Date(r.report_date).toLocaleString()}</td>
+            <td>${r.reporter_name}</td>
+            <td>${r.reporter_contact}</td>
+            <td>${r.item_name}</td>
+            <td>${r.item_description||''}</td>
+            <td>${new Date(r.found_date).toLocaleString()}</td>
+            <td>${r.found_location}</td>
+            <td>${r.assigned_location||''}</td>
+            <td>${r.category_name||''}</td>
+            <td>${r.status}</td>
+            <td>${r.notes||''}</td>
+            <td>${r.resolved_date?new Date(r.resolved_date).toLocaleString():''}</td>`;
+          tb.appendChild(tr);
+        });
+      });
+    }
+
+    document.getElementById('lostForm').onsubmit = e => {
+      e.preventDefault();
+      fetch('/api/lost',{ method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(Object.fromEntries(new FormData(e.target))) })
+        .then(r=>r.json()).then(d=>{ document.getElementById('lostMsg').innerText = d.success ? 'Reported!' : `Error: ${d.error}`; e.target.reset(); });
+    };
+
+    document.getElementById('foundForm').onsubmit = e => {
+      e.preventDefault();
+      fetch('/api/found',{ method:'POST', headers:{'Content-Type':'application/json'},	body: JSON.stringify(Object.fromEntries(new FormData(e.target))) })
+        .then(r=>r.json()).then(d=>{ document.getElementById('foundMsg').innerText = d.success ? 'Reported!' : `Error: ${d.error}`; e.target.reset(); });
+    };
+
+  </script>
+</body>
+</html>

@@ -1,0 +1,207 @@
+/* General Styling */
+body {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  margin: 20px;
+  background-color: #f5f5f5;
+  color: #444;
+}
+
+/* Hide elements */
+.hidden {
+  display: none;
+}
+
+/* Error & Success Messages */
+.error {
+  color: red;
+  margin-top: 5px;
+}
+.success {
+  color: green;
+  margin-top: 5px;
+}
+
+/* Navbar Styling */
+nav {
+  margin: 20px 0;
+}
+nav button {
+  margin: 15px 10px 5px 0;  /* top margin increased to 15px */
+  padding: 10px 20px;
+  background-color: #007BFF;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.3s ease;
+}
+
+nav button:hover {
+  background-color: #00c4ff;
+}
+
+/* Table Styling */
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin-top: 10px;
+  background-color: #ffffff;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  border-radius: 10px;
+  overflow: hidden;
+}
+th, td {
+  border: 1px solid #ccc;
+  padding: 12px 15px;
+  text-align: left;
+}
+th {
+  background-color: #3f3f3f;
+  color: #fff;
+  font-weight: bold;
+}
+td button {
+  background-color: #007BFF;
+  color: #fff;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+td button:hover {
+  background-color: #00c4ff;
+}
+
+/* Form Container */
+form {
+  background-color: #ffffff;
+  padding: 40px 30px;
+  width: 100%;
+  max-width: 500px;
+  border-radius: 12px;
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+  color: #444;
+  margin-bottom: 30px;
+}
+form label {
+  display: block;
+  margin-top: 15px;
+  font-weight: 500;
+}
+form input, form textarea, form select {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 1rem;
+}
+form textarea {
+  resize: vertical;
+  height: 100px;
+}
+form button {
+  margin-top: 20px;
+  background-color: #007BFF;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  max-width: 200px;
+}
+form button:hover {
+  background-color: #00c4ff;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  nav button {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+  th, td {
+    padding: 10px;
+  }
+  form button {
+    width: 100%;
+  }
+}
+
+/* Center Logo Title */
+h1 {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+h1 img {
+  height: 60px;
+  width: auto;
+}
+
+/* Message Styling */
+#loginMsg, #lostMsg, #foundMsg {
+  margin-top: 15px;
+  color: #007BFF;
+  font-weight: bold;
+}
+
+.centered-form {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 80vh; /* Adjust if needed */
+  padding: 20px;
+}
+
+@media (max-height: 500px) {
+  .centered-form {
+    align-items: flex-start;
+    padding-top: 40px;
+  }
+}
+
+h1 {
+  display: flex;
+  align-items: center;         /* Vertically center logo and text */
+  justify-content: center;     /* Center the whole h1 content horizontally */
+  position: relative;          /* For positioning logo absolutely */
+  font-size: 2rem;             /* Adjust title font size as needed */
+  margin: 20px 0;              /* Some vertical margin */
+}
+
+/* Make the logo bigger */
+#logo {
+  position: absolute;          /* Take out of normal flow */
+  left: 0;                    /* Stick to left edge */
+  height: 100px;               /* Bigger height - adjust as you want */
+  width: auto;
+}
+
+/* Add some padding to the title so it doesn't overlap logo */
+h1 {
+  padding-left: 80px;          /* Slightly more than logo width */
+}
+
+h1 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  padding-left: 90px;  /* Add enough space on left for bigger logo */
+  margin: 20px 0;
+  font-size: 2rem;
+}
+
+#logo {
+  position: absolute;
+  left: 10px;          /* Slight inset from page edge */
+  height: 70px;
+  width: auto;
+}
+
